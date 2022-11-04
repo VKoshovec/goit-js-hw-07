@@ -1,4 +1,5 @@
 import { galleryItems } from './gallery-items.js';
+
 // Change code below this line
 
 // console.log(galleryItems);
@@ -32,11 +33,19 @@ galary.addEventListener('click', getImgUrl);
 function getImgUrl (event) {
 
    event.preventDefault();  
-   return checkTarget (event);
+   openImgLightHouse (checkTarget (event));
+
 }
 
 function checkTarget (ev) {
     if (ev.target.nodeName === "IMG") {
         return ev.target.dataset.source;
     }
+}
+
+// 4)
+function openImgLightHouse (imgUrl) {
+    return basicLightbox.create(`
+    <img src="${imgUrl}">
+    `).show();
 }
