@@ -2,50 +2,54 @@ import { galleryItems } from './gallery-items.js';
 
 // Change code below this line
 
-// console.log(galleryItems);
-
-// Выполняй это задание в файлах 01-gallery.html и 01-gallery.js. Разбей его на несколько подзадач:
-
-//    1. Создание и рендер разметки по массиву данных galleryItems и предоставленному шаблону элемента галереи.
-//    2. Реализация делегирования на div.gallery и получение url большого изображения.
-//    3.  Подключение скрипта и стилей библиотеки модального окна basicLightbox. 
-//    Используй CDN сервис jsdelivr и добавь в проект ссылки на минифицированные (.min) файлы библиотеки.
-//    4. Открытие модального окна по клику на элементе галереи. Для этого ознакомься с документацией и примерами.
-//    5. Замена значения атрибута src элемента <img> в модальном окне перед открытием. 
-//    Используй готовую разметку модального окна с изображением из примеров библиотеки basicLightbox.
-
-// 1)
+// vars
 const galary = document.querySelector('.gallery');
+let activModal; 
 
-const galItem = galleryItems.map(({ preview, original, description })=> { 
-     return `<div class="gallery__item"> 
+//gallery creating
+const galleryItem = galleryItems.map(({ preview, original, description })=> { 
+    return `<div class="gallery__item"> 
     <a class="gallery__link" href="${original}">
     <img class="gallery__image" src="${preview}" data-source="${original}" alt="${description}"/>
     </a>
     </div>`
 }).join('');
+galary.innerHTML = galleryItem;
 
-galary.innerHTML = galItem;
+// events
+galary.addEventListener('click', openModal);
+window.addEventListener('keydown', closeImgLightHouse);
 
-// 2)
-galary.addEventListener('click', getImgUrl);
+//lightBox modal window open
+function openModal (event) {
 
-function getImgUrl (event) {
+   const evTarget = event.target;
 
    event.preventDefault();  
-   openImgLightHouse (checkTarget (event));
 
+   if (evTarget.nodeName === "IMG") {
+
+     const imageRef = evTarget.dataset.source;
+     activModal = createLightBox (imageRef);
+     activModal.show();
+
+   }
 }
 
-function checkTarget (ev) {
-    if (ev.target.nodeName === "IMG") {
-        return ev.target.dataset.source;
-    }
-}
-
-// 4)
-function openImgLightHouse (imgUrl) {
+//Create lightBox instance
+function createLightBox (imgUrl) {
     return basicLightbox.create(`
     <img src="${imgUrl}">
-    `).show();
+    `);
+}
+
+//lightBox modal window close by Escape
+function closeImgLightHouse (e) {
+    if (e.key !== "Escape") {
+        return;
+    }
+
+    if (basicLightbox.visible()) {
+        activModal.close();
+    }
 }
